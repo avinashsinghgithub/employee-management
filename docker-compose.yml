@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev --import-realm
+    volumes:
+      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HOSTNAME=http://localhost:8080
+    ports:
+      - "8080:8080"
+    networks:
+      - app-net
+    healthcheck:
+      test: [ "CMD", "sh", "-c", "exec echo > /dev/tcp/localhost/8080" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./employee-mangement-service
+      dockerfile: Dockerfile
+    container_name: spring-backend
+    depends_on:
+      keycloak :
+          condition: service_healthy
+    ports:
+      - "8081:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KEYCLOAK_URL: http://keycloak:8080
+      JWK_SET_URI: http://keycloak:8080/realms/dev-apps-test/protocol/openid-connect/certs
+    networks:
+      - app-net
+
+  frontend:
+    build:
+      context: ./employee-tracker
+      dockerfile: Dockerfile
+    container_name: react-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    environment:
+      - KEYCLOAK_URL=http://keycloak:8080
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
