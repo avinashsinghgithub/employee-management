@@ -1,0 +1,24 @@
+spring:
+  server:
+    port: 8081
+  session:
+    store-type: redis
+    timeout: 30m
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+app:
+  oauth:
+    client-id: ${OAUTH_CLIENT_ID:emp-mng-svc-bff}
+    authorization-uri: ${OAUTH_PROVIDER_AUTH_URI:http://localhost:8080/realms/emp-mng-svc/protocol/openid-connect/auth}
+    token-uri: ${OAUTH_PROVIDER_TOKEN_URI:http://localhost:8080/realms/emp-mng-svc/protocol/openid-connect/token}
+    redirect-uri: ${OAUTH_REDIRECT_URI:http://localhost:8081/auth/callback}
+  frontend-origin: ${FRONTEND_ORIGIN:http://localhost:3000}
+  cookie:
+    name: ${BFF_COOKIE_NAME:bff_session}
+    # Optional domain for sharing cookie across services (set to parent domain like .example.com)
+    domain: ${BFF_COOKIE_DOMAIN:}
+    same-site: ${BFF_COOKIE_SAME_SITE:Lax}
+
+  main:
+    allow-bean-definition-overriding: true

@@ -2,3 +2,4 @@ node-modules
 /.idea/
 /beerservice/
 /employee-mangement-service/.idea/
+/employee-auth-helper-service/.idea/
