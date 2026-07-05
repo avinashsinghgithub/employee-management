@@ -3,3 +3,4 @@ node-modules
 /beerservice/
 /employee-mangement-service/.idea/
 /employee-auth-helper-service/.idea/
+/employee-auth-helper-service/uploads/
